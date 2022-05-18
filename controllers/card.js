@@ -31,15 +31,18 @@ const createCard = (req, res) => {
 };
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.userId)
-    .then((card) => {
-      res.send({ data: card });
-    })
     .orFail(() => {
       throw new Error('NotFound');
     })
+    .then((card) => {
+      res.send({ data: card });
+    })
+
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Пользователь не найден' });
+      if (err.message === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорретные данные' });
+      } else if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
@@ -59,8 +62,10 @@ const deleteLike = (req, res) => {
       res.send({ card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорретные данные' });
+      } else if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
@@ -72,15 +77,18 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => {
-      res.send({ data: card });
-    })
     .orFail(() => {
       throw new Error('NotFound');
     })
+    .then((card) => {
+      res.send({ data: card });
+    })
+
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорретные данные' });
+      } else if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
