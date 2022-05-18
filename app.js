@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const user = require('./routers/user');
+const card = require('./routers/card');
 
 const app = express();
 
@@ -16,7 +17,7 @@ app.use((req, _, next) => {
   next();
 });
 app.use('/', user);
-
+app.use('/', card);
 app.use((_, res) => {
   res.status(404).send({ message: 'Страницы не существует' });
 });
