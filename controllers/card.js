@@ -30,7 +30,7 @@ const createCard = (req, res) => {
     });
 };
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.userId)
+  Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       throw new Error('NotFound');
     })
