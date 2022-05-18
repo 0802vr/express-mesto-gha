@@ -39,13 +39,14 @@ const deleteCard = (req, res) => {
     })
 
     .catch((err) => {
-      if (err.message === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорретные данные' });
       } else if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
+      console.log(err);
     });
 };
 const deleteLike = (req, res) => {
