@@ -46,7 +46,6 @@ const deleteCard = (req, res) => {
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
-      console.log(err);
     });
 };
 const deleteLike = (req, res) => {
