@@ -34,6 +34,9 @@ const deleteCard = (req, res) => {
     .then((card) => {
       res.send({ data: card });
     })
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .catch((err) => {
       if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Пользователь не найден' });
@@ -49,6 +52,9 @@ const deleteLike = (req, res) => {
     { new: true },
 
   )
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((card) => {
       res.send({ card });
     })
@@ -68,6 +74,9 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       res.send({ data: card });
+    })
+    .orFail(() => {
+      throw new Error('NotFound');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
