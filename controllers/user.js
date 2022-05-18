@@ -26,12 +26,17 @@ const createUser = (req, res) => {
 };
 const findUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((user) => {
       res.send({ user });
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Пользователь не найден' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Нет пользователя с переданным id' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }

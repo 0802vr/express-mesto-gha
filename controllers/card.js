@@ -11,6 +11,7 @@ const getCard = (_, res) => {
 };
 
 const createCard = (req, res) => {
+  console.log(req.user._id);
   const { name, link } = req.body;
   const owner = req.user._id;
   const likes = [];
