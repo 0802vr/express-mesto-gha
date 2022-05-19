@@ -45,7 +45,8 @@ const findUser = (req, res) => {
 const updataUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
-    req.body,
+    req.body.user,
+    req.body.about,
 
     {
       new: true,
@@ -66,7 +67,7 @@ const updataUser = (req, res) => {
 const updataAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
-    req.body,
+    req.body.avatar,
 
     {
       new: true,
