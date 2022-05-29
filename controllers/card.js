@@ -34,7 +34,9 @@ const deleteCard = (req, res) => {
       throw new Error('NotFound');
     })
     .then((card) => {
-      res.send({ data: card });
+      if (String(req.user._id) === String(card.owner)) { res.send({ data: card }); } else {
+        res.status(403).send({ message: 'Нет прав на удаление' });
+      }
     })
 
     .catch((err) => {
