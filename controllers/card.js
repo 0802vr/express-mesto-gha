@@ -54,18 +54,19 @@ const deleteLike = (req, res, next) => {
     { new: true },
 
   )
+    .orFail(() => {
+      throw new Error404('Передан несуществующий _id карточки');
+    })
     .then((card) => {
-      if (card === null) {
-        next(new Error404('Карточка с указанным _id не найдена'));
-      }
-      res.send({ card });
+      res.status(200).send({ card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new Error400('Переданы некорретные данные'));
-      } else {
-        next(err);
+      } else if (err.message === 'NotFound') {
+        next(new Error404('Передан несуществующий _id карточки'));
       }
+      next(err);
     });
 };
 const likeCard = (req, res, next) => {
@@ -74,15 +75,17 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new Error404('Передан несуществующий _id карточки');
+    })
     .then((card) => {
-      if (card === null) {
-        next(new Error404('Карточка с указанным _id не найдена'));
-      }
       res.send({ data: card });
     })
 
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message === 'NotFound') {
+        next(new Error404('Передан несуществующий _id карточки'));
+      } else if (err.name === 'CastError') {
         next(new Error400('Переданы некорретные данные'));
       } else {
         next(err);

@@ -62,16 +62,15 @@ const createUser = (req, res, next) => {
 
 function findUser(req, res, next) {
   User.findById(req.params.userId)
-    .orFail(() => {
-      throw new Error404('NotFound');
-    })
+
     .then((user) => {
+      if (!user) {
+        next(new Error404('Пользователь с таким _id не найден'));
+      }
       res.send({ user });
     })
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        next(new Error404('Пользователь не найден'));
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new Error400('Нет пользователя с переданным id'));
       } else {
         next(err);
