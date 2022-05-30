@@ -4,6 +4,7 @@ const User = require('../models/user');
 const Unauthorized = require('../errors/Unauthorized');
 const Error400 = require('../errors/error400');
 const Error404 = require('../errors/error404');
+const Error409 = require('../errors/error409');
 
 const getUser = (_, res, next) => {
   User.find({})
@@ -32,8 +33,11 @@ const getMyUser = (req, res, next) => {
 
 const createUser = (req, res, next) => {
   const {
-    name, about, avatar, email,
+    name, about, avatar, email, password,
   } = req.body;
+  if (!email || !password) {
+    next(new Error400('Отсутствует email или пароль'));
+  }
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
@@ -48,6 +52,8 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new Error400('Переданы некорретные данные'));
+      } else if (err.code === 11000) {
+        next(new Error409('Пользователь с таким email уже существует'));
       } else {
         next(err);
       }
