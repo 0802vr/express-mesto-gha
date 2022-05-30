@@ -124,7 +124,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!email || !password) {
+      if (!user || !email || !password) {
         next(new Unauthorized('Ошибка авторизации'));
       }
       const token = jwt.sign({ _id: user._id }, 'secret-code', { expiresIn: '7d' });
@@ -133,7 +133,7 @@ const login = (req, res, next) => {
           maxAge: 1000000,
           httpOnly: true,
         })
-        .send({ message: 'Пользователь залогирован' });
+        .send({ token });
     })
     .catch(next);
 };
