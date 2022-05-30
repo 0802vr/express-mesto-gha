@@ -124,18 +124,12 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!email || !password) {
-        next(new Unauthorized('Ошибка авторизации'));
-      }
       const token = jwt.sign({ _id: user._id }, 'secret-code', { expiresIn: '7d' });
-      return res
-        .cookie('jwt', token, {
-          maxAge: 1000000,
-          httpOnly: true,
-        })
-        .send({ message: 'Вы зашли!' });
+      return res.send({ token });
     })
-    .catch(next);
+    .catch(() => {
+      next(new Unauthorized('Неверные почта или пароль'));
+    });
 };
 
 module.exports = {
