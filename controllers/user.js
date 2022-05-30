@@ -24,7 +24,7 @@ const getMyUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new Error404('id пользователя указан не верно'));
+        next(new Error400('id пользователя указан не верно'));
       } else {
         next(err);
       }

@@ -31,7 +31,7 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
-      throw new Error('NotFound');
+      throw new Error404('Карточка с указанным _id не найдена');
     })
     .then((card) => {
       if (String(req.user._id) === String(card.owner)) { res.send({ data: card }); } else {
@@ -42,10 +42,9 @@ const deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new Error400('Переданы некорретные данные'));
-      } if (err.message === 'NotFound') {
-        next(new Error404('Карточка с указанным _id не найдена'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 const deleteLike = (req, res, next) => {
@@ -55,17 +54,15 @@ const deleteLike = (req, res, next) => {
     { new: true },
 
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
     .then((card) => {
+      if (card === null) {
+        next(new Error404('Карточка с указанным _id не найдена'));
+      }
       res.send({ card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new Error400('Переданы некорретные данные'));
-      } else if (err.message === 'NotFound') {
-        next(new Error404('Карточка с указанным _id не найдена'));
       } else {
         next(err);
       }
@@ -77,18 +74,16 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
     .then((card) => {
+      if (card === null) {
+        next(new Error404('Карточка с указанным _id не найдена'));
+      }
       res.send({ data: card });
     })
 
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new Error400('Переданы некорретные данные'));
-      } else if (err.message === 'NotFound') {
-        next(new Error404('Карточка с указанным _id не найдена'));
       } else {
         next(err);
       }

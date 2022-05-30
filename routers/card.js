@@ -9,7 +9,7 @@ router.post(
   '/cards',
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
+      name: Joi.string().min(2).max(30).required(),
       link: Joi.string().required().pattern(/^https?:\/\/[a-z\d\-._~:/?#[\]@!$&'()*+,;=]+#?$/),
     }),
   }),

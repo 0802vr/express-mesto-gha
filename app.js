@@ -43,9 +43,10 @@ app.post(
 app.use('/', auth, user);
 app.use('/', auth, card);
 
-app.use('*', (req, res, next) => next(
-  new Error404('Ресурс не найден'),
-));
+app.use('*', () => {
+  throw new Error404('Такой страницы не существует');
+});
+
 app.use(errors());
 
 app.use((err, _, res, next) => {
