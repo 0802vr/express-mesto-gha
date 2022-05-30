@@ -65,11 +65,12 @@ function findUser(req, res, next) {
 
     .then((user) => {
       if (!user) {
-        next(new Error404('Пользователь с таким _id не найден'));
+        throw new Error404('Пользователь с таким _id не найден');
       }
-      res.send({ user });
+      res.send({ data: user });
     })
     .catch((err) => {
+      console.log(err);
       if (err.name === 'CastError') {
         next(new Error400('Нет пользователя с переданным id'));
       } else {
