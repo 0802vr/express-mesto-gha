@@ -2,35 +2,35 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Unauthorized = require('../errors/Unauthorized');
+const Error400 = require('../errors/error400');
+const Error404 = require('../errors/error404');
 
-const getUser = (_, res) => {
+const getUser = (_, res, next) => {
   User.find({})
     .then((user) => {
       res.send({ data: user });
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Ошибка по-умолчанию' });
-    });
+    .catch(next);
 };
 
 const getMyUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Пользователь с таким _id не найден' });
+        next(new Error404('Пользователь с таким _id не найден'));
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'id пользователя указан не верно' });
+        next(new Error404('id пользователя указан не верно'));
       } else {
         next(err);
       }
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
   } = req.body;
@@ -47,14 +47,14 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорретные данные' });
+        next(new Error400('Переданы некорретные данные'));
       } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+        next(err);
       }
     });
 };
 
-function findUser(req, res) {
+function findUser(req, res, next) {
   User.findById(req.params.userId)
     .orFail(() => {
       throw new Error('NotFound');
@@ -64,15 +64,15 @@ function findUser(req, res) {
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        next(new Error404('Пользователь не найден'));
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Нет пользователя с переданным id' });
+        next(new Error400('Нет пользователя с переданным id'));
       } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+        next(err);
       }
     });
 }
-const updataUser = (req, res) => {
+const updataUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     req.body,
@@ -87,13 +87,13 @@ const updataUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорретные данные' });
+        next(new Error404('Переданы некорретные данные'));
       } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+        next(err);
       }
     });
 };
-const updataAvatar = (req, res) => {
+const updataAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     req.body,
@@ -108,9 +108,9 @@ const updataAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорретные данные' });
+        next(new Error404('Переданы некорретные данные'));
       } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+        next(err);
       }
     });
 };

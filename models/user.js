@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i,
+    validate: /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/,
   },
   email: {
     type: String,
@@ -51,7 +51,8 @@ userSchema.statics.findUserByCredentials = (email, password) => {
         }
         return user;
       });
-  });
+  })
+    .catch(() => Promise.reject(new Error('На сервере произошла ошибка')));
 };
 
 module.exports = mongoose.model('user', userSchema);

@@ -6,10 +6,12 @@ const cardSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
     type: String,
+    validate: /[\wа-яА-ЯЁёё-]+/,
   },
   link: {
     required: true,
     type: String,
+    validate: /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/,
   },
   owner: {
     type: mongoose.Types.ObjectId,
