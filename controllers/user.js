@@ -63,7 +63,7 @@ const createUser = (req, res, next) => {
 function findUser(req, res, next) {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new Error('NotFound');
+      throw new Error404('NotFound');
     })
     .then((user) => {
       res.send({ user });
