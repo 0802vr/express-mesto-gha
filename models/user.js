@@ -51,8 +51,7 @@ userSchema.statics.findUserByCredentials = (email, password) => {
         }
         return user;
       });
-  })
-    .catch(() => Promise.reject(new Error('На сервере произошла ошибка')));
+  });
 };
 
 module.exports = mongoose.model('user', userSchema);
