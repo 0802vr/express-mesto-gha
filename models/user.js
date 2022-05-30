@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     maxlength: 30,
     type: String,
     default: 'Жак-Ив Кусто',
-    validate: /[ \wа-яА-ЯЁёё-]+/,
+
   },
   about: {
     required: true,
@@ -18,19 +18,19 @@ const userSchema = new mongoose.Schema({
     maxlength: 30,
     type: String,
     default: 'Исследователь',
-    validate: /[ \wа-яА-ЯЁёё-]+/,
+
   },
   avatar: {
     type: String,
     required: true,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: /^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/,
+    validate: (v) => validator.isURL(v),
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    validate: [validator.isEmail, 'Введите валидный e-mail'],
+    validate: (v) => validator.isEmail(v),
   },
   password: {
     type: String,
