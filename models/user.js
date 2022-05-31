@@ -5,7 +5,6 @@ const Unauthorized = require('../errors/Unauthorized');
 
 const userSchema = new mongoose.Schema({
   name: {
-    required: true,
     minlength: 2,
     maxlength: 30,
     type: String,
@@ -13,7 +12,6 @@ const userSchema = new mongoose.Schema({
 
   },
   about: {
-    required: true,
     minlength: 2,
     maxlength: 30,
     type: String,
@@ -22,7 +20,6 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: (v) => validator.isURL(v),
   },

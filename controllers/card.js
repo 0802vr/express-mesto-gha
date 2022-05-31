@@ -21,22 +21,26 @@ const createCard = (req, res, next) => {
     .then((card) => {
       res.send({ data: card });
     })
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new Error400('Переданы некорретные данные'));
+        return next(new Error400('Переданы некорретные данные'));
       }
       next(err);
     });
 };
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const { cardId } = req.params;
+  Card.findById(cardId)
     .orFail(() => {
       throw new Error404('Карточка с указанным _id не найдена');
     })
     .then((card) => {
-      if (String(req.user._id) === String(card.owner)) { res.send({ data: card }); } else {
-        next(new Error403('Нет прав на удаление'));
+      if (String(req.user._id) !== String(card.owner)) {
+        return next(new Error403('Нет прав на удаление'));
       }
+      return card.remove()
+        .then(() => res.send({ message: 'Карточка успешно удалена' }));
     })
 
     .catch((err) => {
